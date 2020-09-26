@@ -34,10 +34,10 @@ public class JDBCExample {
     
     public static void main(String args[]){
         try {
-            String url="jdbc:mysql://HOST:3306/BD";
+            String url="jdbc:mysql://desarrollo.is.escuelaing.edu.co:3306/bdprueba";
             String driver="com.mysql.jdbc.Driver";
-            String user="USER";
-            String pwd="PWD";
+            String user="bdprueba";
+            String pwd="prueba2019";
                         
             Class.forName(driver);
             Connection con=DriverManager.getConnection(url,user,pwd);
@@ -57,8 +57,8 @@ public class JDBCExample {
             System.out.println("-----------------------");
             
             
-            int suCodigoECI=20134423;
-            registrarNuevoProducto(con, suCodigoECI, "SU NOMBRE", 99999999);            
+            int suCodigoECI=2133516;
+            registrarNuevoProducto(con, suCodigoECI, "Sebastian", 99999998);            
             con.commit();
                         
             
@@ -80,10 +80,20 @@ public class JDBCExample {
      * @throws SQLException 
      */
     public static void registrarNuevoProducto(Connection con, int codigo, String nombre,int precio) throws SQLException{
-        //Crear preparedStatement
-        //Asignar parámetros
-        //usar 'execute'
-
+    	
+    	// Crear preparedStatement
+        String updateString ="INSERT INTO  ORD_PRODUCTOS(codigo,nombre,precio)"
+                            + " VALUES (?, ?, ?)";
+        PreparedStatement registro =con.prepareStatement(updateString);
+        
+        // Asignar Parámetros
+        registro.setInt(1, codigo);
+        registro.setString(2, nombre);
+        registro.setInt(3, precio);
+        
+        // Usar Execute
+        registro.execute();
+        
         
         con.commit();
         
@@ -99,10 +109,20 @@ public class JDBCExample {
         List<String> np=new LinkedList<>();
         
         //Crear prepared statement
+        Statement state = con.createStatement();
+      
         //asignar parámetros
+        String insert = String.format("SELECT * FROM bdprueba.ORD_DETALLE_PEDIDO d INNER JOIN bdprueba.ORD_PRODUCTOS p ON d.producto_fk = p.codigo WHERE d.pedido_fk = %s",codigoPedido);
+
         //usar executeQuery
+        ResultSet resultS = state.executeQuery(insert);
+        
         //Sacar resultados del ResultSet
         //Llenar la lista y retornarla
+        while(resultS.next()) {
+        	String Name = resultS.getString("nombre");
+        	np.add(Name);
+        }
         
         return np;
     }
@@ -117,9 +137,19 @@ public class JDBCExample {
     public static int valorTotalPedido(Connection con, int codigoPedido){
         
         //Crear prepared statement
+    	Statement state = con.createStatement();
+    	
         //asignar parámetros
-        //usar executeQuery
+    	String insertFormat = String.format("SELECT * FROM bdprueba.ORD_DETALLE_PEDIDO d INNER JOIN bdprueba.ORD_PRODUCTOS p ON d.producto_fk = p.codigo WHERE d.pedido_fk = %s",codigoPedido);
+        
+    	//usar executeQuery
+    	ResultSet resultS = st.executeQuery(insertFormat);
+    	
         //Sacar resultado del ResultSet
+    	int precio = 0;
+    	while(resultS.next()) {
+    		precio+=resultS.getInt("precio");
+    	}
         
         return 0;
     }
