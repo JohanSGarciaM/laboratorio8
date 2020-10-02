@@ -21,10 +21,19 @@ package edu.eci.cvds.samples.services.client;
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.SQLException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import org.apache.ibatis.io.Resources;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.session.SqlSessionFactoryBuilder;
+
+import edu.eci.cvds.sampleprj.dao.mybatis.mappers.ClienteMapper;
+import edu.eci.cvds.sampleprj.dao.mybatis.mappers.ItemMapper;
+import edu.eci.cvds.samples.entities.Item;
+import edu.eci.cvds.samples.entities.TipoItem;
 
 /**
  *
@@ -39,6 +48,7 @@ public class MyBatisExample {
      * @return instancia de SQLSessionFactory
      */
     public static SqlSessionFactory getSqlSessionFactory() {
+    	
         SqlSessionFactory sqlSessionFactory = null;
         if (sqlSessionFactory == null) {
             InputStream inputStream;
@@ -49,6 +59,7 @@ public class MyBatisExample {
                 throw new RuntimeException(e.getCause());
             }
         }
+        
         return sqlSessionFactory;
     }
 
@@ -58,17 +69,12 @@ public class MyBatisExample {
      * @throws SQLException 
      */
     public static void main(String args[]) throws SQLException {
-        SqlSessionFactory sessionfact = getSqlSessionFactory();
+    	SqlSessionFactory sessionfact = getSqlSessionFactory();
 
-        SqlSession sqlss = sessionfact.openSession();
-
-        
-        //Crear el mapper y usarlo: 
-        //ClienteMapper cm=sqlss.getMapper(ClienteMapper.class)
-        //cm...
-        
-        
-        
+    	SqlSession sqlss = sessionfact.openSession();
+        ClienteMapper cm=sqlss.getMapper(ClienteMapper.class);
+        ItemMapper cn=sqlss.getMapper(ItemMapper.class);
+        System.out.println(cm.consultarClientes());
         sqlss.commit();
         
         
@@ -77,6 +83,17 @@ public class MyBatisExample {
         
         
     }
+    public static Date convertDate(String fecha){
+        try {
+            return new SimpleDateFormat("yyyy-MM-dd").parse(fecha);
+        } catch (ParseException e) {
+            return null;
+        }        
+    }
+
+        
+        
+    
 
 
 }

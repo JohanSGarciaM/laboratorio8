@@ -46,7 +46,7 @@ public class JDBCExample {
             
             System.out.println("Valor total pedido 1:"+valorTotalPedido(con, 1));
             
-            List<String> prodsPedido=nombresProductosPedido(con, 1);
+            List<String> prodsPedido=nombresProductosPedido(con, 2);
             
             
             System.out.println("Productos del pedido 1:");
@@ -56,10 +56,10 @@ public class JDBCExample {
             }
             System.out.println("-----------------------");
             
-            
             int suCodigoECI=2133516;
             registrarNuevoProducto(con, suCodigoECI, "Sebastian", 99999998);            
             con.commit();
+           
                         
             
             con.close();
@@ -103,27 +103,26 @@ public class JDBCExample {
      * Consultar los nombres de los productos asociados a un pedido
      * @param con la conexión JDBC
      * @param codigoPedido el código del pedido
-     * @return 
+     * @return lista  de nombres
+     * @throws SQLException 
      */
-    public static List<String> nombresProductosPedido(Connection con, int codigoPedido){
+    public static List<String> nombresProductosPedido(Connection con, int codigoPedido) throws SQLException{
         List<String> np=new LinkedList<>();
         
         //Crear prepared statement
-        Statement state = con.createStatement();
-      
-        //asignar parámetros
-        String insert = String.format("SELECT * FROM bdprueba.ORD_DETALLE_PEDIDO d INNER JOIN bdprueba.ORD_PRODUCTOS p ON d.producto_fk = p.codigo WHERE d.pedido_fk = %s",codigoPedido);
-
-        //usar executeQuery
-        ResultSet resultS = state.executeQuery(insert);
+        PreparedStatement productos = null;
+        String updateStatement  = "SELECT nombre"
+                                 +" FROM ORD_PRODUCTOS,ORD_DETALLE_PEDIDO"                 
+                                 +" WHERE codigo = producto_fk AND pedido_fk = ?";
+        productos =con.prepareStatement(updateStatement);
+        productos.setInt(1, codigoPedido);
         
-        //Sacar resultados del ResultSet
-        //Llenar la lista y retornarla
-        while(resultS.next()) {
-        	String Name = resultS.getString("nombre");
-        	np.add(Name);
+        ResultSet firstQuery  = productos.executeQuery();
+        
+        while (firstQuery.next()){
+            String result = firstQuery.getString("nombre");
+            np.add(result);
         }
-        
         return np;
     }
 
@@ -133,25 +132,35 @@ public class JDBCExample {
      * @param con
      * @param codigoPedido código del pedido cuyo total se calculará
      * @return el costo total del pedido (suma de: cantidades*precios)
+     * @throws SQLException 
      */
-    public static int valorTotalPedido(Connection con, int codigoPedido){
+    public static int valorTotalPedido(Connection con, int codigoPedido) throws SQLException{
         
+    	int result=0;
+
         //Crear prepared statement
-    	Statement state = con.createStatement();
-    	
-        //asignar parámetros
-    	String insertFormat = String.format("SELECT * FROM bdprueba.ORD_DETALLE_PEDIDO d INNER JOIN bdprueba.ORD_PRODUCTOS p ON d.producto_fk = p.codigo WHERE d.pedido_fk = %s",codigoPedido);
+        PreparedStatement valorPedido = null;
+        String updateStatement = "SELECT sum(precio*cantidad)"
+                                + " FROM ORD_PEDIDOS,ORD_DETALLE_PEDIDO,ORD_PRODUCTOS"
+                                + " WHERE ORD_PEDIDOS.codigo = ORD_DETALLE_PEDIDO.pedido_fk AND ORD_DETALLE_PEDIDO.producto_fk=ORD_PRODUCTOS.codigo AND ORD_PEDIDOS.codigo= ?";
         
-    	//usar executeQuery
-    	ResultSet resultS = st.executeQuery(insertFormat);
-    	
+        try{
+            valorPedido = con.prepareStatement(updateStatement);
+            valorPedido.setInt(1,codigoPedido);
+            ResultSet firstQuery = valorPedido.executeQuery();
+            while (firstQuery.next()){
+                result = firstQuery.getInt("sum(precio*cantidad)");}
+        }catch(SQLException e){
+                
+            e.printStackTrace();
+        }
+        //usar executeQuery
         //Sacar resultado del ResultSet
-    	int precio = 0;
-    	while(resultS.next()) {
-    		precio+=resultS.getInt("precio");
-    	}
+        con.commit();
         
-        return 0;
+                
+        
+        return result;
     }
     
 
