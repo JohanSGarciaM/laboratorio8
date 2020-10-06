@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3c.org/1999/xhtml"
+xmlns:h="http://xmlns.jcp.org/jsf/html"
+xmlns:p="http://primefaces.org/ui"
+xmlns:f="http://java.sun.com/jsf/core">
+
+ <h:head></h:head>
+ 	<h:body>
+ 		<h:form id="registrarCliente">
+ 			<p><p:outputLabel value="Bienvenido, rellena la siguiente información para crear un nuevo usuario"> </p:outputLabel></p>
+ 			<h3>Nombre</h3>
+			<span class="ui-float-label">
+				<p:inputText id="float-input" binding="#{nombreCliente}" />
+			</span>
+			<h3>Documento</h3>
+			<span class="ui-float-label">
+				<p:inputText id="documentoCliente" binding="#{documentoCliente}" />
+			</span>
+			<h3>Telefono</h3>
+			<span class="ui-float-label">
+				<p:inputText id="telefonoCliente" binding="#{telefonoCliente}" />
+			</span>
+			<h3>Direccion</h3>
+			<span class="ui-float-label">
+				<p:inputText id="direccionCliente" binding="#{direccionCliente}" />
+			</span>
+			<h3>Correo</h3>
+			<span class="ui-float-label">
+				<p:inputText id="correoCliente" binding="#{correoCliente}" />
+			</span>
+ 			<p><p:commandButton update="cliente" actionListener="#{servicios.registrarCliente(nombreCliente.value,documentoCliente.value,telefonoCliente.value,direccionCliente.value,correoCliente.value)}" value="Registrar"></p:commandButton></p>
+ 		</h:form>
+		<h:form id="cliente">
+			<p:dataTable id="clientes" var="cliente" value="#{servicios.clientes}"
+                         paginator="true" paginatorTemplate="{FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
+                         rows="10">
+             	<f:facet name="header">
+                    Clientes actualmente registrados
+                </f:facet>
+                <p:column headerText="Nombre Cliente">
+                    <h:outputText value="#{cliente.nombre}" />
+                </p:column>
+
+                <p:column headerText="Documento">
+                    <h:outputText value="#{cliente.documento}" binding="#{superDocumento}" />
+                </p:column>
+
+                <p:column headerText="Celular">
+                    <h:outputText value="#{cliente.telefono}" />
+                </p:column>
+
+                <p:column headerText="Dirección">
+                    <h:outputText value="#{cliente.direccion}" />
+                </p:column>
+
+                <p:column headerText="Correo">
+                    <h:outputText value="#{cliente.email}" />
+                </p:column>
+                <p:column headerText="Items Rentados">
+                    <p:link outcome="registroalquiler" value="Seleccionar">
+                    	<f:param name="documento" value="#{superDocumento.value}" />
+					</p:link>
+                </p:column>
+
+            </p:dataTable>
+ 			<!-- <p:inputText id="intento" binding="#{intento}"></p:inputText> -->
+ 			<!-- <p:commandButton update="guess_form" actionListener="#{User.guess(intento.value)}" value="Jugar"></p:commandButton> -->
+ 			<!-- <p:commandButton update="guess_form" actionListener="#{User.restart}" value="Reiniciar"></p:commandButton> -->
+ 			<!-- <p:messages id="mensaje" showDetail="true" autoUpdate="true" closable="true" globalOnly="true"/> -->
+ 		</h:form> 
+ 	</h:body>
+</html>

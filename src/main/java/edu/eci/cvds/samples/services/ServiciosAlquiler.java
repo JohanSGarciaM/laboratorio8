@@ -29,8 +29,9 @@ public interface ServiciosAlquiler {
    /**
    * @obj consultar los items que estan disponibles para alquiler
    * @return el listado de items disponibles
+ * @throws ExcepcionServiciosAlquiler 
    */
-   public abstract List<Item> consultarItemsDisponibles();
+   public abstract List<Item> consultarItemsDisponibles() throws ExcepcionServiciosAlquiler ;
 
    /**
    * @obj consultar el valor de la multa del alquiler, dado el id del item

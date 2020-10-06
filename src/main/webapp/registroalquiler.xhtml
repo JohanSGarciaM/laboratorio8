@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3c.org/1999/xhtml"
+xmlns:h="http://xmlns.jcp.org/jsf/html"
+xmlns:p="http://primefaces.org/ui"
+xmlns:f="http://java.sun.com/jsf/core">
+
+ <h:head>
+ 	<f:metadata>
+ 		<f:viewParam id="idClienteIngresado" name="documento" value="#{servicios.idClienteIngresado}" required="true"/>
+ 	</f:metadata>
+ </h:head>
+ 	<h:body>
+ 		<h:form id="itemsRentadosRetardados">
+ 			<p:dataTable id="itemRentadoRetarded" var="item" value="#{servicios.itemsRetardados}"
+                         paginator="true" paginatorTemplate="{FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
+                         rows="10">
+             	<f:facet name="header">
+                    Items rentados que vencieron
+                </f:facet>
+                <p:column headerText="ID">
+                    <h:outputText value="#{item.id}" />
+                </p:column>
+
+                <p:column headerText="Item">
+                    <h:outputText value="#{item.item.nombre}" />
+                </p:column>
+
+                <p:column headerText="fecha inicio">
+                    <h:outputText value="#{item.fechainiciorenta}" />
+                </p:column>
+
+                <p:column headerText="Fecha Fin">
+                    <h:outputText value="#{item.fechafinrenta}" />
+                </p:column>
+                
+                <p:column headerText="Multa">
+                    <h:outputText value="#{servicios.hallarMultaItem(item.id)}" />
+                </p:column>
+
+
+            </p:dataTable>
+ 		</h:form>
+		<h:form id="itemsCliente">
+			<p><p:outputLabel value="Estas revisando la información del cliente #{servicios.clienteIngresado.nombre}"> </p:outputLabel></p>
+			<p:dataTable id="itemRentado" var="item" value="#{servicios.items}"
+                         paginator="true" paginatorTemplate="{FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
+                         rows="10">
+             	<f:facet name="header">
+                    Items rentados por el cliente
+                </f:facet>
+                <p:column headerText="ID">
+                    <h:outputText value="#{item.id}" />
+                </p:column>
+
+                <p:column headerText="Item">
+                    <h:outputText value="#{item.item.nombre}" />
+                </p:column>
+
+                <p:column headerText="fecha inicio">
+                    <h:outputText value="#{item.fechainiciorenta}" />
+                </p:column>
+
+                <p:column headerText="Fecha Fin">
+                    <h:outputText value="#{item.fechafinrenta}" />
+                </p:column>
+
+
+            </p:dataTable>
+
+ 		</h:form>
+ 		<h:form id="registrarCliente">
+ 			<p><p:outputLabel value="Bienvenido, rellena la siguiente información para alquilar un objeto"> </p:outputLabel></p>
+ 			<h3>Codigo/ID</h3>
+			<span class="ui-float-label">
+				<p:inputText id="idArticulo" binding="#{articuloID}" />
+			</span>
+			<h3>Dias de alquiler</h3>
+			<span class="ui-float-label">
+				<p:inputText id="diasAlquilerArticulo" binding="#{articuloDias}" />
+			</span>
+ 			<p>
+	 			<p:commandButton update="itemsCliente" actionListener="#{servicios.registrarItemCliente(articuloID.value,articuloDias.value)}" value="Registrar">
+	 				<p:confirm header="Confirmation" message="Estas seguro?" icon="pi pi-exclamation-triangle" />
+	 			</p:commandButton>
+	 			<p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+			        <p:commandButton value="Si ombe" type="button" styleClass="ui-confirmdialog-yes" icon="pi pi-check" />
+			        <p:commandButton value="No, es un robo" type="button" styleClass="ui-confirmdialog-no" icon="pi pi-times" />
+			    </p:confirmDialog> 
+ 			</p>
+ 		</h:form>
+ 	</h:body>
+</html>
