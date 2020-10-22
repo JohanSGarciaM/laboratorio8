@@ -26,9 +26,7 @@ public class ServiciosAlquilerTest {
     private SqlSession sqlSession;
 
     ServiciosAlquiler serviciosAlquiler;
-    
-    private long documento = 1;
-
+  
     public ServiciosAlquilerTest() {
         serviciosAlquiler = ServiciosAlquilerFactory.getInstance().getServiciosAlquilerTesting();
     }
@@ -52,37 +50,18 @@ public class ServiciosAlquilerTest {
 		Assert.assertTrue(r);
 	}
     @Test
-    public void consultarCostoAlquiler() throws ParseException{
-        try{
-            serviciosAlquiler.registrarItem(new Item(new TipoItem(1, "electrodomestico" ),99,
-                             "item99", "item99", new SimpleDateFormat("yyyy/MM/dd").parse("2019/09/28"),
-                                   99,"Digital","99"));
-            System.out.println("SI ENTRAAAAAAAAAAAAAAAAA");
-            System.out.println(serviciosAlquiler.consultarCostoAlquiler(99,2));
-            
-        }
-        catch (ExcepcionServiciosAlquiler e ){
-            Assert.assertEquals("Error al calcular tarifa",e.getMessage());
-        }
-
-    }
-
-
-
-
-//Apoyo para las pruebas.
-    public Item generarItem(){        
-        TipoItem tipoDeItemAgregado = new TipoItem(15,"Tipo de Item volador");
-        Date fecha = convertDate("2012-02-22");
-        Item itemAgregado = new Item(tipoDeItemAgregado, 115, "Cloud Treasure", "Tesoro en las alturas vuela a velocidades impresionantes", fecha, 20000, "Renta Express", "Carreras");
-        return itemAgregado;
-    }
-    
-    public static Date convertDate(String fecha) {
-        try {
-            return new SimpleDateFormat("yyyy-MM-dd").parse(fecha);
-        } catch (ParseException e) {
-            return null;
-        }
+    public void emptyDB() {
+        for(int i = 0; i < 100; i += 10) {
+            boolean r = false;
+            try {
+                Cliente cliente = serviciosAlquiler.consultarCliente(i);
+            } catch(ExcepcionServiciosAlquiler e) {
+                r = true;
+            } catch(IndexOutOfBoundsException e) {
+                r = true;
+            }
+            // Validate no Client was found;
+            Assert.assertTrue(r);
+        };
     }
 }
